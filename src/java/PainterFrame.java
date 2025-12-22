@@ -1,6 +1,4 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class PainterFrame extends JFrame {
@@ -11,158 +9,167 @@ public class PainterFrame extends JFrame {
         final Painter canvas = new Painter();
 
         // ===== Tool Buttons =====
-        JButton brushBtn  = new JButton("Brush");
+        JButton brushBtn = new JButton("Brush");
         JButton eraserBtn = new JButton("Eraser");
-        JButton lineBtn   = new JButton("Line");
-        JButton rectBtn   = new JButton("Rectangle");
-        JButton ovalBtn   = new JButton("Oval");
+        JButton lineBtn = new JButton("Line");
+        JButton rectBtn = new JButton("Rectangle");
+        JButton ovalBtn = new JButton("Oval");
 
-        brushBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.setTool(Painter.BRUSH);
-            }
-        });
+        // Set tool on button click (Lambda expression)
+        brushBtn.addActionListener(e -> canvas.setTool(Painter.BRUSH));
+        eraserBtn.addActionListener(e -> canvas.setTool(Painter.ERASER));
+        lineBtn.addActionListener(e -> canvas.setTool(Painter.LINE));
+        rectBtn.addActionListener(e -> canvas.setTool(Painter.RECT));
+        ovalBtn.addActionListener(e -> canvas.setTool(Painter.OVAL));
 
-        eraserBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.setTool(Painter.ERASER);
-            }
-        });
+        // hand tool
+        JButton handBtn = new JButton("Hand");
+        handBtn.addActionListener(e -> canvas.setTool(Painter.HAND));
 
-        lineBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.setTool(Painter.LINE);
-            }
-        });
-
-        rectBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.setTool(Painter.RECT);
-            }
-        });
-
-        ovalBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.setTool(Painter.OVAL);
-            }
-        });
-
+        // undo button
         JButton undoBtn = new JButton("Undo");
+        undoBtn.addActionListener(e -> canvas.undo());
 
-        undoBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.undo();
-            }
-        });
-
-
+        // clear button
         JButton clearBtn = new JButton("Clear");
+        clearBtn.addActionListener(e -> canvas.clear());
 
-        clearBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.clear();
+        // open button
+        JButton openBtn = new JButton("Open");
+        openBtn.addActionListener(e -> canvas.openImage());
+
+        // save button
+        JButton saveBtn = new JButton("Save (PNG)");
+        saveBtn.addActionListener(e -> canvas.saveImage());
+
+        // Color buttons
+        JPanel colorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
+        // Predefined colors
+        Color[] defaultColors = { Color.BLACK, Color.GRAY, Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN,
+                Color.BLUE, Color.MAGENTA, Color.PINK };
+
+        // Add color buttons to panel
+        for (Color c : defaultColors) {
+            JButton cBtn = createColorButton(c, canvas);
+            colorPanel.add(cBtn);
+        }
+
+        // Color palette button
+        JButton colorPaletteBtn = new JButton("...");
+        colorPaletteBtn.setToolTipText("Color Palette");
+        colorPaletteBtn.addActionListener(e -> {
+            Color c = JColorChooser.showDialog(this, "Select Color", canvas.getCurrentColor());
+            if (c != null) {
+                canvas.setCurrentColor(c);
             }
         });
+        colorPanel.add(colorPaletteBtn);
 
-        // ===== Color Buttons =====
-        JButton blackBtn = new JButton("Black");
-        JButton blueBtn  = new JButton("Blue");
-        JButton greenBtn = new JButton("Green");
-        JButton redBtn   = new JButton("Red");
-
-        blackBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.setCurrentColor(Color.BLACK);
-            }
+        // Size slider to adjust stroke size
+        JLabel sizeLabel = new JLabel("Stroke: 3");
+        JSlider sizeSlider = new JSlider(1, 100, 3);
+        sizeSlider.addChangeListener(e -> {
+            int val = sizeSlider.getValue();
+            canvas.setStrokeSize(val);
+            sizeLabel.setText("Stroke: " + val);
         });
 
-        blueBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.setCurrentColor(Color.BLUE);
-            }
+        // Zoom controls
+        JButton zoomInBtn = new JButton("+");
+        JButton zoomOutBtn = new JButton("-");
+        JButton zoomResetBtn = new JButton("Reset View");
+        JLabel zoomDisplay = new JLabel("Zoom: 100%");
+
+        // Update timer or listener for zoom display could be added,
+        // but for now we update it on button clicks
+        zoomInBtn.addActionListener(e -> {
+            canvas.zoomIn();
+            zoomDisplay.setText("Zoom: " + (int) (canvas.getZoomScale() * 100) + "%");
+        });
+        zoomOutBtn.addActionListener(e -> {
+            canvas.zoomOut();
+            zoomDisplay.setText("Zoom: " + (int) (canvas.getZoomScale() * 100) + "%");
+        });
+        zoomResetBtn.addActionListener(e -> {
+            canvas.resetZoom();
+            zoomDisplay.setText("Zoom: 100%");
         });
 
-        greenBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.setCurrentColor(Color.GREEN);
-            }
-        });
+        // Toolbar panels
+        JPanel topToolbar = new JPanel();
+        topToolbar.setLayout(new BoxLayout(topToolbar, BoxLayout.Y_AXIS));
 
-        redBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.setCurrentColor(Color.RED);
-            }
-        });
+        // Row one include (Files, Tools, and Options)
+        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        row1.add(new JLabel("Files:"));
+        row1.add(openBtn);
+        row1.add(saveBtn);
+        row1.add(new JLabel("   Tools:"));
+        row1.add(brushBtn);
+        row1.add(eraserBtn);
+        row1.add(rectBtn);
+        row1.add(ovalBtn);
+        row1.add(handBtn);
+        row1.add(new JLabel("   "));
+        row1.add(undoBtn);
+        row1.add(clearBtn);
 
-        // ===== Checkboxes =====
-        final JCheckBox dashedCheck = new JCheckBox("Dashed");
-        final JCheckBox filledCheck = new JCheckBox("Filled");
+        // Row two include (Colors and Size)
+        JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        row2.add(new JLabel("Colors:"));
+        row2.add(colorPanel);
+        row2.add(new JLabel("   Size:"));
+        row2.add(sizeLabel);
+        row2.add(sizeSlider);
 
-        dashedCheck.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.setDashed(dashedCheck.isSelected());
-            }
-        });
+        // Row three include (Options and View)
+        JPanel row3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JCheckBox dashedCheck = new JCheckBox("Dashed");
+        JCheckBox filledCheck = new JCheckBox("Filled");
+        // set action listeners to change the dashed and filled flags
+        dashedCheck.addActionListener(e -> canvas.setDashed(dashedCheck.isSelected()));
+        filledCheck.addActionListener(e -> canvas.setFilled(filledCheck.isSelected()));
 
-        filledCheck.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvas.setFilled(filledCheck.isSelected());
-            }
-        });
+        row3.add(new JLabel("Options:"));
+        row3.add(dashedCheck);
+        row3.add(filledCheck);
+        row3.add(new JLabel("   View:"));
+        row3.add(zoomOutBtn);
+        row3.add(zoomResetBtn);
+        row3.add(zoomInBtn);
+        row3.add(zoomDisplay);
+        row3.add(new JLabel("   (Use CTRL + MouseWheel to zoom in/out)"));
 
-        // ===== Toolbar Panel =====
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topToolbar.add(row1);
+        topToolbar.add(row2);
+        topToolbar.add(row3);
 
-        top.add(new JLabel("Tools:"));
-        top.add(brushBtn);
-        top.add(eraserBtn);
-        top.add(lineBtn);
-        top.add(rectBtn);
-        top.add(ovalBtn);
-
-        top.add(new JLabel("   ")); // simple spacing
-
-        top.add(new JLabel("Colors:"));
-        top.add(blackBtn);
-        top.add(blueBtn);
-        top.add(greenBtn);
-        top.add(redBtn);
-
-        top.add(new JLabel("   "));
-
-        top.add(dashedCheck);
-        top.add(filledCheck);
-
-        top.add(new JLabel("   "));
-        top.add(undoBtn);
-        top.add(clearBtn);
-
-        // ===== Frame Layout =====
+        // Frame layout
         setLayout(new BorderLayout());
-        add(top, BorderLayout.NORTH);
-        add(canvas, BorderLayout.CENTER);
+        add(topToolbar, BorderLayout.NORTH);
+        add(canvas, BorderLayout.CENTER); // Start with the canvas in the center
 
-        setSize(1100, 650);
+        setSize(1400, 950);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
+    // Create color button and add it to the color panel
+    private JButton createColorButton(Color color, Painter canvas) {
+        JButton btn = new JButton();
+        btn.setBackground(color);
+        btn.setPreferredSize(new Dimension(30, 30));
+        btn.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        btn.setContentAreaFilled(false);
+        btn.setOpaque(true);
+        // set action listener to change the current color
+        btn.addActionListener(e -> canvas.setCurrentColor(color));
+        return btn;
+    }
+
     public static void main(String[] args) {
-        new PainterFrame();
+        // Ensure UI updates match the professional feel
+        SwingUtilities.invokeLater(() -> new PainterFrame());
     }
 }
-
