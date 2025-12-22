@@ -33,12 +33,13 @@ public abstract class Shape {
     // Using Stroke interface and return object based on the dashed flag
     protected Stroke makeStroke() {
         if (dashed) {
+            float dashValue = (float) strokeSize * 3f;
             return new BasicStroke(
                     (float) strokeSize,
                     BasicStroke.CAP_ROUND,
                     BasicStroke.JOIN_ROUND,
                     10f,
-                    new float[] { 10f, 10f },
+                    new float[] { dashValue, dashValue },
                     0f);
         }
 
