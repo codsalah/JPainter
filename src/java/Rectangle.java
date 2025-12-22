@@ -6,8 +6,8 @@ public class Rectangle extends Shape {
     int width, height;
 
     // Constructors
-    public Rectangle(int x, int y, Color color, int width, int height) {
-        super(x, y, color);
+    public Rectangle(int x, int y, Color color, int strokeSize, int width, int height) {
+        super(x, y, color, strokeSize);
         this.width = width;
         this.height = height;
     }

@@ -1,13 +1,13 @@
 import java.awt.*;
 
 public class Freehand extends Oval {
-    
-    public Freehand(int x, int y, Color color, int width, int height) {
-        super(x, y, color, width, height);
+
+    public Freehand(int x, int y, Color color, int strokeSize) {
+        super(x, y, color, strokeSize, strokeSize, strokeSize);
 
         setFilled(true);
 
         setDashed(false);
     }
-    
+
 }
