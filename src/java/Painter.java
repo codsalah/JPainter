@@ -305,11 +305,11 @@ public class Painter extends JPanel implements NavigateHand.NavigableView {
     public void clear() {
         shapes.clear();
         previewShape = null;
+        currentPath = null;
         backgroundImage = null;
-        // TODO: make it dynamic
-        sheetWidth = 2000;
-        sheetHeight = 2000;
-        resetZoom();
+
+        // DO NOT reset zoom/pan
+        repaint();
     }
 
     // Open an image file
