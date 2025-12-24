@@ -108,6 +108,7 @@ public class PainterFrame extends JFrame {
         row1.add(brushBtn);
         row1.add(eraserBtn);
         row1.add(rectBtn);
+        row1.add(lineBtn);
         row1.add(ovalBtn);
         row1.add(handBtn);
 
