@@ -43,6 +43,11 @@ public class Painter extends JPanel implements NavigateHand.NavigableView {
     private PathShape currentPath = null;
     private BufferedImage backgroundImage = null;
 
+    // Save Workspace for undo after clean
+    private ArrayList<Shape> savedShapesBeforeClear = null;
+    private BufferedImage savedBackgroundBeforeClear = null;
+    private boolean canUndoClear = false;
+
     private NavigateHand navigateHand;
 
     public Painter() {
@@ -293,7 +298,22 @@ public class Painter extends JPanel implements NavigateHand.NavigableView {
         this.baseStrokeSize = size;
     }
 
+    // Undo the last shape or clear
     public void undo() {
+        // If the last action was Clear, undo should restore everything
+        if (canUndoClear) {
+            shapes = new ArrayList<>(savedShapesBeforeClear);
+            backgroundImage = savedBackgroundBeforeClear;
+
+            previewShape = null;
+            currentPath = null;
+
+            canUndoClear = false;
+            repaint();
+            return;
+        }
+
+        // Normal undo: remove last shape
         if (!shapes.isEmpty()) {
             shapes.remove(shapes.size() - 1);
             previewShape = null;
@@ -303,12 +323,17 @@ public class Painter extends JPanel implements NavigateHand.NavigableView {
 
     // Clear the canvas
     public void clear() {
+        // save current state so Undo can restore it
+        savedShapesBeforeClear = new ArrayList<>(shapes);
+        savedBackgroundBeforeClear = backgroundImage;
+        canUndoClear = true;
+
+        // clear current state
         shapes.clear();
         previewShape = null;
         currentPath = null;
         backgroundImage = null;
 
-        // DO NOT reset zoom/pan
         repaint();
     }
 
