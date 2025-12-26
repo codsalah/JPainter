@@ -56,6 +56,8 @@ public class Painter extends JPanel implements NavigateHand.NavigableView {
     private BufferedImage savedBackgroundBeforeClear = null;
     private boolean canUndoClear = false;
 
+    private ArrayList<Shape> redoList = new ArrayList<>();
+
     private NavigateHand navigateHand;
 
     public Painter() {
@@ -104,6 +106,8 @@ public class Painter extends JPanel implements NavigateHand.NavigableView {
                     currentPath = new PathShape(cx, cy, c, getDynamicStrokeSize());
                     currentPath.setDashed(dashed);
                     shapes.add(currentPath);
+
+                    redoList.clear();
                 }
 
                 // TEXT tool: click once to place text
@@ -153,6 +157,8 @@ public class Painter extends JPanel implements NavigateHand.NavigableView {
                     Shape finalShape = createShape(startX, startY, cx, cy);
                     shapes.add(finalShape);
                     previewShape = null;
+
+                    redoList.clear();
                 }
                 currentPath = null;
                 repaint();
@@ -271,6 +277,8 @@ public class Painter extends JPanel implements NavigateHand.NavigableView {
             );
 
             shapes.add(t);
+
+            redoList.clear();
             
             canUndoClear = false;
         }
@@ -413,8 +421,19 @@ public class Painter extends JPanel implements NavigateHand.NavigableView {
 
         // Normal undo: remove last shape
         if (!shapes.isEmpty()) {
-            shapes.remove(shapes.size() - 1);
+            Shape removedShape = shapes.remove(shapes.size() - 1);
+            redoList.add(removedShape);
             previewShape = null;
+            repaint();
+        }
+    }
+
+    // Redo last undo shape
+    public void redo() {
+        if (!redoList.isEmpty()) {
+            // Get the last item from redoList
+            Shape shapeToRestore = redoList.remove(redoList.size() - 1);
+            shapes.add(shapeToRestore);
             repaint();
         }
     }
@@ -431,6 +450,8 @@ public class Painter extends JPanel implements NavigateHand.NavigableView {
         previewShape = null;
         currentPath = null;
         backgroundImage = null;
+
+        redoList.clear();
 
         repaint();
     }

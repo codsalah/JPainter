@@ -34,6 +34,10 @@ public class PainterFrame extends JFrame {
         JButton undoBtn = new JButton("Undo");
         undoBtn.addActionListener(e -> canvas.undo());
 
+        // redo button
+        JButton redoBtn = new JButton("Redo");
+        redoBtn.addActionListener(e -> canvas.redo());
+
         // clear button
         JButton clearBtn = new JButton("Clear");
         clearBtn.addActionListener(e -> canvas.clear());
@@ -158,6 +162,7 @@ public class PainterFrame extends JFrame {
 
         row1.add(new JLabel("   "));
         row1.add(undoBtn);
+        row1.add(redoBtn);
         row1.add(clearBtn);
 
         // Row two: Colors, Size, View
