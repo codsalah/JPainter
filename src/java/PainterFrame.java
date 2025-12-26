@@ -201,7 +201,7 @@ public class PainterFrame extends JFrame {
         
         // Setup keyboard shortcuts with visual feedback
         ShortcutManager.setup(getRootPane(), openBtn, saveBtn, brushBtn, eraserBtn, rectBtn, ovalBtn, handBtn,
-                dashedCheck, filledCheck, undoBtn, clearBtn, colorButtons, colorPaletteBtn);
+                dashedCheck, filledCheck, undoBtn, redoBtn, clearBtn, colorButtons, colorPaletteBtn);
         
         setVisible(true);
     }

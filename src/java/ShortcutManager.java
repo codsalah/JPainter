@@ -16,6 +16,7 @@ public class ShortcutManager {
             JCheckBox dashedCheck,
             JCheckBox filledCheck,
             JButton undoBtn,
+            JButton redoBtn,
             JButton clearBtn,
             List<JButton> colorButtons,
             JButton colorPaletteBtn) {
@@ -44,6 +45,7 @@ public class ShortcutManager {
 
         // Actions
         bindKey(im, am, KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK, "undo", undoBtn);
+        bindKey(im, am, KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK, "redo", redoBtn);
         bindKey(im, am, KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, "clear", clearBtn);
 
         // Colors (1-9)
