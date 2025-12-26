@@ -123,6 +123,11 @@ public class Painter extends JPanel implements NavigateHand.NavigableView {
                     navigateHand.mouseDragged(e);
                     return;
                 }
+
+                if (tool == TEXT) {
+                    return;
+                }
+                
                 // Convert mouse coords to canvas coords and clamp them to the sheet size
                 int cx = clamp(toCanvasX(e.getX()), sheetWidth);
                 int cy = clamp(toCanvasY(e.getY()), sheetHeight);
