@@ -12,6 +12,7 @@ public class ShortcutManager {
             JButton eraserBtn,
             JButton rectBtn,
             JButton ovalBtn,
+            JButton textBtn,
             JButton handBtn,
             JCheckBox dashedCheck,
             JCheckBox filledCheck,
@@ -37,6 +38,7 @@ public class ShortcutManager {
         bindKey(im, am, KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, "eraser", eraserBtn);
         bindKey(im, am, KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, "rect", rectBtn);
         bindKey(im, am, KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, "oval", ovalBtn);
+        bindKey(im, am, KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, "text", textBtn);
         bindKey(im, am, KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, "hand", handBtn);
 
         // Toggles

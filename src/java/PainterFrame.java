@@ -200,7 +200,7 @@ public class PainterFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Setup keyboard shortcuts with visual feedback
-        ShortcutManager.setup(getRootPane(), openBtn, saveBtn, brushBtn, eraserBtn, rectBtn, ovalBtn, handBtn,
+        ShortcutManager.setup(getRootPane(), openBtn, saveBtn, brushBtn, eraserBtn, rectBtn, ovalBtn, textBtn, handBtn,
                 dashedCheck, filledCheck, undoBtn, redoBtn, clearBtn, colorButtons, colorPaletteBtn);
         
         setVisible(true);
