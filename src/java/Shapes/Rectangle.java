@@ -1,12 +1,13 @@
+package Shapes;
 import java.awt.*;
 
-public class Oval extends Shape {
+public class Rectangle extends Shape {
 
     // Attributes
     int width, height;
 
     // Constructors
-    public Oval(int x, int y, Color color, int strokeSize, int width, int height) {
+    public Rectangle(int x, int y, Color color, int strokeSize, int width, int height) {
         super(x, y, color, strokeSize);
         this.width = width;
         this.height = height;
@@ -27,10 +28,10 @@ public class Oval extends Shape {
         g2.setColor(color);
 
         if (filled) {
-            g2.fillOval(x, y, width, height);
+            g2.fillRect(x, y, width, height);
         } else {
             g2.setStroke(makeStroke());
-            g2.drawOval(x, y, width, height);
+            g2.drawRect(x, y, width, height);
         }
     }
 

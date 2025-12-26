@@ -1,4 +1,12 @@
-import java.awt.*;
+package UIFrame;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -6,6 +14,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import Shapes.Line;
+import Shapes.Oval;
+import Shapes.PathShape;
+import Shapes.Rectangle;
+import Shapes.Shape;
+import Shapes.TextShape;
+import Shapes.NavigateHand;
 
 public class Painter extends JPanel implements NavigateHand.NavigableView {
 
