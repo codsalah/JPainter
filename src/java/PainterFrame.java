@@ -1,22 +1,29 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class PainterFrame extends JFrame {
 
+    private static final int CONFIGURABLE_ICON_SIZE = 30;
+    private static final int CONFIGURABLE_LABEL_TEXT_SIZE = 15;
+
     public PainterFrame() {
-        super("Painter App");
+        super("Painter App"); 
 
         final Painter canvas = new Painter();
 
         // ===== Tool Buttons =====
-        JButton brushBtn = new JButton("Brush");
-        JButton eraserBtn = new JButton("Eraser");
-        JButton lineBtn = new JButton("Line");
-        JButton rectBtn = new JButton("Rectangle");
-        JButton ovalBtn = new JButton("Oval");
-        JButton textBtn = new JButton("Text");
+        JButton brushBtn = createIconButton("Brush", "icons8-brush-96.png");
+        JButton eraserBtn = createIconButton("Eraser", "icons8-eraser-96.png");
+        JButton lineBtn = createIconButton("Line", "icons8-line-96.png");
+        JButton rectBtn = createIconButton("Rectangle", "icons8-square-96.png");
+        JButton ovalBtn = createIconButton("Oval", "icons8-oval-48.png");
+        JButton textBtn = createIconButton("Text", "icons8-text-96.png");
 
         // Set tool on button click (Lambda expression)
         brushBtn.addActionListener(e -> canvas.setTool(Painter.BRUSH));
@@ -27,27 +34,34 @@ public class PainterFrame extends JFrame {
         textBtn.addActionListener(e -> canvas.setTool(Painter.TEXT));
 
         // hand tool
-        JButton handBtn = new JButton("Hand");
+        JButton handBtn = createIconButton("Hand", "icons8-hand-96.png");
         handBtn.addActionListener(e -> canvas.setTool(Painter.HAND));
 
         // undo button
-        JButton undoBtn = new JButton("Undo");
+        JButton undoBtn = createIconButton("Undo", "icons8-undo-96.png");
         undoBtn.addActionListener(e -> canvas.undo());
 
         // redo button
-        JButton redoBtn = new JButton("Redo");
+        JButton redoBtn = createIconButton("Redo", "icons8-undo-96.png");
+        // Flip the undo icon to create a redo icon
+        if (redoBtn.getIcon() != null) {
+            redoBtn.setIcon(flipIcon((ImageIcon) redoBtn.getIcon()));
+        }
         redoBtn.addActionListener(e -> canvas.redo());
 
         // clear button
-        JButton clearBtn = new JButton("Clear");
+        // clear button
+        JButton clearBtn = createIconButton("Clear", "icons8-clear-96.png");
         clearBtn.addActionListener(e -> canvas.clear());
 
         // open button
-        JButton openBtn = new JButton("Open");
+        // open button
+        JButton openBtn = createIconButton("Open", "icons8-open-48.png");
         openBtn.addActionListener(e -> canvas.openImage());
 
         // save button
-        JButton saveBtn = new JButton("Save (PNG)");
+        // save button
+        JButton saveBtn = createIconButton("Save (PNG)", "icons8-save-961.png");
         saveBtn.addActionListener(e -> canvas.saveImage());
 
         // Color buttons
@@ -108,9 +122,13 @@ public class PainterFrame extends JFrame {
         styleBox.setSelectedItem("Plain");
         styleBox.addActionListener(e -> {
             String s = (String) styleBox.getSelectedItem();
-            if (s.equals("Bold")) canvas.setTextFontStyle(Font.BOLD);
-            else if (s.equals("Italic")) canvas.setTextFontStyle(Font.ITALIC);
-            else canvas.setTextFontStyle(Font.PLAIN);
+            if (s.equals("Bold")) {
+                canvas.setTextFontStyle(Font.BOLD);
+            } else if (s.equals("Italic")) {
+                canvas.setTextFontStyle(Font.ITALIC);
+            } else {
+                canvas.setTextFontStyle(Font.PLAIN);
+            }
         });
 
         // Zoom controls
@@ -118,6 +136,7 @@ public class PainterFrame extends JFrame {
         JButton zoomOutBtn = new JButton("-");
         JButton zoomResetBtn = new JButton("Reset View");
         JLabel zoomDisplay = new JLabel("Zoom: 100%");
+        configureComponentFont(zoomDisplay); // Only for the label text
 
         // Update timer or listener for zoom display could be added,
         // but for now we update it on button clicks
@@ -140,10 +159,10 @@ public class PainterFrame extends JFrame {
 
         // Row one: Files, Tools, Options, Utility
         JPanel row1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        row1.add(new JLabel("Files:"));
+        row1.add(createLabel("Files:"));
         row1.add(openBtn);
         row1.add(saveBtn);
-        row1.add(new JLabel("   Tools:"));
+        row1.add(createLabel("   Tools:"));
         row1.add(brushBtn);
         row1.add(eraserBtn);
         row1.add(lineBtn);
@@ -152,40 +171,51 @@ public class PainterFrame extends JFrame {
         row1.add(textBtn);
         row1.add(handBtn);
 
-        row1.add(new JLabel("   Options:"));
+        row1.add(createLabel("   Options:"));
         JCheckBox dashedCheck = new JCheckBox("Dashed");
         JCheckBox filledCheck = new JCheckBox("Filled");
+        configureComponentFont(dashedCheck);
+        configureComponentFont(filledCheck);
         dashedCheck.addActionListener(e -> canvas.setDashed(dashedCheck.isSelected()));
         filledCheck.addActionListener(e -> canvas.setFilled(filledCheck.isSelected()));
         row1.add(dashedCheck);
         row1.add(filledCheck);
 
-        row1.add(new JLabel("   "));
+        row1.add(createLabel("   "));
         row1.add(undoBtn);
         row1.add(redoBtn);
         row1.add(clearBtn);
 
         // Row two: Colors, Size, View
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        row2.add(new JLabel("Colors:"));
+        row2.add(createLabel("Colors:"));
         row2.add(colorPanel);
-        row2.add(new JLabel("   Size:"));
+        row2.add(createLabel("   Size:"));
         row2.add(sizeLabel);
         row2.add(sizeSlider);
 
-        row2.add(new JLabel("   Font:"));
+        row2.add(createLabel("   Font:"));
         row2.add(fontBox);
-        row2.add(new JLabel("Size:"));
+        row2.add(createLabel("Size:"));
         row2.add(fontSizeSpinner);
-        row2.add(new JLabel("Style:"));
+        row2.add(createLabel("Style:"));
         row2.add(styleBox);
 
-        row2.add(new JLabel("   View:"));
+        row2.add(createLabel("   View:"));
         row2.add(zoomOutBtn);
         row2.add(zoomResetBtn);
         row2.add(zoomInBtn);
+        row2.add(new JLabel("Zoom: 100%")); // Reverting zoomDisplay to simple label for now if needed, or configuring it manually? 
+        // Actually, zoomDisplay was defined earlier. Let's just wrap it.
+        // Wait, zoomDisplay is a JLabel. I should have configured it earlier or pass it to configureComponentFont.
+        // Since I can't easily jump back, I will just re-add it here with configuration if I can, but I can't re-declare it.
+        // I'll assume zoomDisplay variable is valid and I need to replace the `row2.add(zoomDisplay)` line if I wanted to wrap, but I can't.
+        // I will just use `row2.add(zoomDisplay);` and ensure zoomDisplay was configured.
+        // Looking at previous chunks, I might have missed configuring zoomDisplay explicitly in this pass if I removed it from the declaration block.
+        // Let's check line 139: JLabel zoomDisplay = new JLabel("Zoom: 100%");
+        // I will add a chunk to configure it there.
         row2.add(zoomDisplay);
-        row2.add(new JLabel("   (Use CTRL + MouseWheel to zoom)"));
+        row2.add(createLabel("   (Use CTRL + MouseWheel to zoom)"));
 
         topToolbar.add(row1);
         topToolbar.add(row2);
@@ -247,6 +277,61 @@ public class PainterFrame extends JFrame {
             btn.addActionListener(e -> canvas.setCurrentColor(color));
         }
         return btn;
+    }
+
+    private ImageIcon flipIcon(ImageIcon icon) {
+        int w = icon.getIconWidth();
+        int h = icon.getIconHeight();
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        g2.drawImage(icon.getImage(), 0, 0, w, h, w, 0, 0, h, null);
+        g2.dispose();
+        return new ImageIcon(img);
+    }
+
+    private JButton createIconButton(String text) {
+        return createIconButton(text, null);
+    }
+
+    private JButton createIconButton(String text, String iconFileName) {
+        JButton button = new JButton();
+        button.setToolTipText(text);
+        configureComponentFont(button);
+        
+        if (iconFileName != null) {
+            try {
+                String iconPath = "src/icons/" + iconFileName;
+                File iconFile = new File(iconPath);
+                
+                if (iconFile.exists()) {
+                    BufferedImage img = ImageIO.read(iconFile);
+                    Image scaledImg = img.getScaledInstance(CONFIGURABLE_ICON_SIZE, CONFIGURABLE_ICON_SIZE, Image.SCALE_SMOOTH);
+                    button.setIcon(new ImageIcon(scaledImg));
+                    return button; 
+                }
+            } catch (IOException e) {
+                System.err.println("Could not load icon: " + iconFileName);
+            }
+        }
+        // Fallback or explicit text button
+        button.setText(text);
+        return button;
+    }
+
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        configureComponentFont(label);
+        return label;
+    }
+
+    private void configureComponentFont(JComponent component) {
+        Font f = component.getFont();
+        if (f == null) {
+            f = new Font("SansSerif", Font.PLAIN, CONFIGURABLE_LABEL_TEXT_SIZE);
+        } else {
+            f = f.deriveFont((float) CONFIGURABLE_LABEL_TEXT_SIZE);
+        }
+        component.setFont(f);
     }
 
     public static void main(String[] args) {
